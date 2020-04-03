@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js'></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+
+        body {
+            color: white;
+            font-family: 'Open Sans', sans-serif;
+            background-image: url("sunset_germany_airport_frankfurt_aircraft_aviation_terminal_boeing-456915.jpg");
+            background-repeat: no-repeat;
+        }
+
+        .bigger {
+            font-size: 1.2em;
+            line-height: 2em;
+        }
+
+        .fld{border: 1px dotted #ccc; background: white; font-family: monospace; padding: 10px 20px; font-size: 18px; margin: 5px 5px 5px 0; color: red;}
+        .fld:focus { background-color:lightgray; outline: none;}
+        .btn{border: 1px dotted #ccc; background: white; font-family: monospace; padding: 10px 20px; font-size: 18px; margin: 5px 5px 5px 0; color: black;}
+        .btn:hover { background-color:lightgray; outline: none;}
+        label { display: inline-block; width: 150px; text-align: right;}
+      
+      
+    </style>
+</head>
+
+<body>
+    <h1>Cancelled Flight Prediction</h1>
+        <div class="bigger">Flight Info</div>
+  
+        <div class="frm">
+            <label for="ca">Carrier:</label> <input class="fld" type="text" value="AA" id="ca"><br>
+            <label for="or">Origin:</label> <input class="fld" type="text" value="ICT" id="or"><br>
+            <label for="de">Destination:</label> <input class="fld" type="text" value="DFW" id="de"><br>
+            <label for="dt">Departure Time:</label> <input class="fld" type="text" value="1135" id="dt"><br>
+            <label for="fd">Flight Duration:</label> <input class="fld" type="text" value="85" id="fd"><br>
+            <label for="we">Week:</label> <input class="fld" type="text" value="11" id="we"><br>
+            <label for="di">Distance:</label> <input class="fld" type="text" value="328" id="di"><br><br>
+            <input type="submit" class="btn" value="Will it be late?" onclick="go_fetch()"></input>
+        </div>
+  
+        
+        <div class="bigger" id='pred_value'>Predicted Value: </div>
+
+        
+    </div>
+    <script>
+      
+        var url = 'https://modelservice.ml-6a640dfc-c03.jf-works.xfaz-gdb4.cloudera.site/model';
+        var api_key = "mmllrukfuikvitk46k8ladrbkveu1l7y"
+      
+        function go_fetch() {
+            var post_data = {
+                accessKey:api_key,
+                request: { feature : d3.select('#ca').property("value")+","+
+                          d3.select('#or').property("value")+","+
+                          d3.select('#de').property("value")+","+
+                          d3.select('#dt').property("value")+","+
+                          d3.select('#fd').property("value")+","+
+                          d3.select('#we').property("value")+","+
+                          d3.select('#di').property("value") } 
+            };
+
+            fetch(url, {
+                    method: 'POST', // or 'PUT'
+                    body: JSON.stringify(post_data), // data can be `string` or {object}!
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(response => d3.select("#pred_value").text("Predicted Value: " + (response.response.result == 0 ? "Not Cancelled" : "Cancelled")))
+                .catch(error => console.error('Error:', error));
+        }
+
+    </script>
+</body>
