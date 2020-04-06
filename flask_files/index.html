@@ -51,9 +51,9 @@
         
     </div>
     <script>
-      
-        var url = 'https://modelservice.ml-6a640dfc-c03.jf-works.xfaz-gdb4.cloudera.site/model';
-        var api_key = "mmllrukfuikvitk46k8ladrbkveu1l7y"
+
+        var url = window.location.origin.substr(0,window.location.origin.indexOf(":")+1) + "//" + "modelservice." + window.location.origin.substr(window.location.origin.indexOf(".")+1) + '/model'
+        var api_key = "mts8okqvm4y3evrjly1qu2d16hdh3zwm"
       
         function go_fetch() {
             var post_data = {
