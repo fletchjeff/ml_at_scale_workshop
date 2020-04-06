@@ -78,101 +78,15 @@ smaller_data_set = flight_raw_df.select(
 
 # #### Commented out as it has already been run
 smaller_data_set.write.parquet(
-  path="s3a://jf-workshop-mod-env-cdp-bucket/data/airlines/airline_parquet",
-  mode='overwrite',
-  compression="snappy")
-
-smaller_data_set.write.saveAsTable(
-  'default.smaller_flight_table',
-   format='parquet', 
-   mode='overwrite')
-
-#   path='s3a://prod-cdptrialuser19-trycdp-com/cdp-lake/data/airlines/airline_parquet_table')
+#  path="s3a://jf-workshop-mod-env-cdp-bucket/data/airlines/airline_parquet",
+#  mode='overwrite',
+#  compression="snappy")
+#
+#smaller_data_set.write.saveAsTable(
+#  'default.smaller_flight_table',
+#   format='parquet', 
+#   mode='overwrite')
 
 spark.sql("select * from default.smaller_flight_table limit 10").show()
 
-# ## This is added info for Hive optimisation
-#
-# #### Simple data enrichment
-# #### Extract year and month and day and enrich the dataframe 
-
-flight_year_month = flight_raw_df \
-  .withColumn("YEAR", year("FL_DATE")) \
-  .withColumn("MONTH", month("FL_DATE")) \
-  .withColumn("DAYOFMONTH", dayofmonth("FL_DATE"))
-  
-flight_year_month.cache()
-flight_year_month.createOrReplaceTempView('flights_raw')
-
-# #### Save table in with no optimisation
-
-# #### Commented out as it has already been run
-#flight_year_month.write.saveAsTable(
-#  'default.flight_not_partitioned', 
-#   format='orc', 
-#   mode='overwrite')
-#', 
-#   path='s3a://prod-cdptrialuser19-trycdp-com/cdp-lake/data/airlines/flight_not_partitioned')
-
-
-# ## optimize - order + partition
-# When saving data to Hive or Impala, it is important to optimize the data for reading
-# This usually entails : 
-# 1. Some type of ordering (in this case by Year, Month, Day)
-# 2. Some type of partionning of the table 
-#    This has a *major impact* when filtering / slicing 
-
-flight_year_month = flight_year_month.sortWithinPartitions(["YEAR","MONTH","DAYOFMONTH"])
-print('Dataset has {} lines'.format(flight_year_month.count()))
-
-# #### Save data in Hive 
-
-# Required to insert into a partitionned table
-spark.sql("SET hive.exec.dynamic.partition = true")
-spark.sql("SET hive.exec.dynamic.partition.mode = nonstrict")
-
-# #### Commented out as it has already been run
-#flight_year_month.write.saveAsTable(
-#  'default.flight_partitioned', 
-#   format='orc', 
-#   mode='overwrite', 
-#   path='s3a://prod-cdptrialuser19-trycdp-com/cdp-lake/data/airlines/flight_partitioned',
-#   partitionBy=('YEAR', 'MONTH')) 
-  
-spark.sql("SHOW PARTITIONS default.flight_partitioned").show(100)
-spark.sql("ANALYZE TABLE default.flight_partitioned COMPUTE STATISTICS")
-
-#
-# --------- Read test comparison --------------
-# ## Read Data - difference in read with partitionned table
-# Predicate filtering
-Year = 2015
-Month = 10
-
-# ### Complete dataset size
-
-dataset_count = spark.sql("select count(*) from default.flight_partitioned").first()
-print('Dataset has {} lines'.format(dataset_count['count(1)']))
-
-# ###  Read non partitionned table
-import time
-start_time1 = time.time()
-statement = 'select * from default.flight_not_partitioned where YEAR = {} and MONTH = {}'.format(Year, Month)
-print(statement)
-flight_df1 = spark.sql(statement)
-
-print('dataset has {} lines'.format(flight_df1.count()))
-print("--- %s seconds ---" % (time.time() - start_time1))
-
-
-# ###  Read partitionned table
-import time
-start_time2 = time.time()
-statement = 'select * from default.flight_partitioned where YEAR = {} and MONTH = {}'.format(Year, Month)
-print(statement)
-flight_df2 = spark.sql(statement)
-
-print('dataset has {} lines'.format(flight_df2.count()))
-print("--- %s seconds ---" % (time.time() - start_time2))
-
-spark.stop()
+#spark.stop()
