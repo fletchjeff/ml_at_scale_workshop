@@ -14,10 +14,6 @@ spark = SparkSession\
     
 flights_path="s3a://jf-workshop-mod-env-cdp-bucket/data/airlines/csv/*"
 
-from IPython.core.display import HTML
-HTML('<a href="http://spark-{}.{}">Spark UI</a>'.format(os.getenv("CDSW_ENGINE_ID"),os.getenv("CDSW_DOMAIN")))
-
-
 # ## Read Data from file
 
 schema = StructType([StructField("FL_DATE", TimestampType(), True),
@@ -77,7 +73,7 @@ smaller_data_set = flight_raw_df.select(
 )
 
 # #### Commented out as it has already been run
-smaller_data_set.write.parquet(
+# smaller_data_set.write.parquet(
 #  path="s3a://jf-workshop-mod-env-cdp-bucket/data/airlines/airline_parquet",
 #  mode='overwrite',
 #  compression="snappy")
