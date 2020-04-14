@@ -24,6 +24,6 @@ This project is for the end-to-end ML at Scale workshop. It creates an API that 
 
 ### R - users
 
-`install.packages(c("sparklyr","psych","ggthemes","leaflet")`
+`install.packages(c("sparklyr","psych","ggthemes","leaflet"))`
 
 http://blog.cloudera.com/blog/2017/02/analyzing-us-flight-data-on-amazon-s3-with-sparklyr-and-apache-spark-2-0/
