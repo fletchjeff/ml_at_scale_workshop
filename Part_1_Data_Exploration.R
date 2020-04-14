@@ -71,15 +71,6 @@ config$spark.driver.memory <- "6g"
 config$spark.yarn.access.hadoopFileSystems <- s3_bucket
 sc <- spark_connect(master = "yarn-client", config=config)
 
-#---
-
-## Load the Spark UI
-#This creates a link the Spark UI. Its specific to CML and needed because of an issue 
-#with TLS that is being fixed. If you are running locally, the Sparklyr connection panel 
-#shoudl provide you with the Spark UI link.
-
-library(cdsw)
-html(paste("<a href='http://spark-",Sys.getenv("CDSW_ENGINE_ID"),".",Sys.getenv("CDSW_DOMAIN"),"' target='_blank'>Spark UI<a>",sep=""))
 
 #---
 
@@ -98,7 +89,7 @@ html(paste("<a href='http://spark-",Sys.getenv("CDSW_ENGINE_ID"),".",Sys.getenv(
 #run on the in-memory version.
 #
 
-s3_link_all <- paste(s3_bucket,"data/airlines/csv/*",sep="")
+s3_link_all <- paste(s3_bucket,"/data/airlines/csv/*",sep="")
 
 cols = list(
   FL_DATE = "date",
@@ -323,7 +314,7 @@ cancelled_by_route_non_combo %>% head(10) %>% as.data.frame
 spark_read_csv(
   sc,
   name = "airports",
-  path = paste(s3_bucket,"data/airlines/airports.csv",sep=""),
+  path = paste(s3_bucket,"/data/airlines/airports.csv",sep=""),
   infer_schema = TRUE,
   header = TRUE
 )
