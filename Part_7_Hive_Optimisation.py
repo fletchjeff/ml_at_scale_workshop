@@ -1,7 +1,14 @@
+# # Optional Hive Optimisation
+#
+# This is some additional code to improve the performance of the Hive tables with better
+# partitioning
+
 from pyspark.sql import SparkSession
 from pyspark.sql.types import *
 from pyspark.sql.functions import *
 import os
+
+s3_bucket = os.getenv("STORAGE")
 
 spark = SparkSession\
     .builder\
@@ -9,13 +16,10 @@ spark = SparkSession\
     .config("spark.executor.memory","8g")\
     .config("spark.executor.cores","4")\
     .config("spark.driver.memory","6g")\
-    .config("spark.yarn.access.hadoopFileSystems","s3a://jf-workshop-mod-env-cdp-bucket/")\
+    .config("spark.yarn.access.hadoopFileSystems",s3_bucket)\
     .getOrCreate()
     
-flights_path="s3a://jf-workshop-mod-env-cdp-bucket/data/airlines/csv/*"
-
-from IPython.core.display import HTML
-HTML('<a href="http://spark-{}.{}">Spark UI</a>'.format(os.getenv("CDSW_ENGINE_ID"),os.getenv("CDSW_DOMAIN")))
+flights_path= s3_bucket + "/data/airlines/csv/*"
 
 
 # ## Read Data from file
@@ -83,8 +87,6 @@ flight_year_month.createOrReplaceTempView('flights_raw')
 #  'default.flight_not_partitioned', 
 #   format='orc', 
 #   mode='overwrite')
-#', 
-#   path='s3a://prod-cdptrialuser19-trycdp-com/cdp-lake/data/airlines/flight_not_partitioned')
 
 
 # ## optimize - order + partition
@@ -108,7 +110,6 @@ spark.sql("SET hive.exec.dynamic.partition.mode = nonstrict")
 #  'default.flight_partitioned', 
 #   format='orc', 
 #   mode='overwrite', 
-#   path='s3a://prod-cdptrialuser19-trycdp-com/cdp-lake/data/airlines/flight_partitioned',
 #   partitionBy=('YEAR', 'MONTH')) 
   
 spark.sql("SHOW PARTITIONS default.flight_partitioned").show(100)

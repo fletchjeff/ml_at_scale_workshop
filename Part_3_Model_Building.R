@@ -15,15 +15,15 @@ library(dplyr)
 #---
 
 # ## Start the Spark Session
-# Note the changes to `spark.executor.memory` and `spark.executor.instances`. SparkML processes are more memory intensive and therefore require a different configuration to run efficiently.
+# You might need to make changes to the `spark.executor.memory` and `spark.executor.instances settings`. SparkML processes are more memory intensive and therefore require a different configuration to run efficiently.
 
 #spark_home_set("/etc/spark/")
 
 config <- spark_config()
 config$spark.executor.memory <- "8g"
-config$spark.executor.cores <- "2"
+config$spark.executor.cores <- "4"
 config$spark.driver.memory <- "6g"
-config$spark.yarn.access.hadoopFileSystems <- "s3a://jf-workshop-mod-env-cdp-bucket/"
+config$spark.yarn.access.hadoopFileSystems <- s3_bucket
 spark <- spark_connect(master = "yarn-client", config=config)
 
 #---
@@ -143,7 +143,7 @@ ml_binary_classification_evaluator(predictions)
 
 # ml_save(
 #   fitted_pipeline,
-#   "s3a://ml-field/demo/flight-analysis/data/models/fitted_pipeline_r",
+#   paste(s3_bucket,"/data/models/fitted_pipeline_r",sep="")
 #   overwrite = TRUE
 # )
 

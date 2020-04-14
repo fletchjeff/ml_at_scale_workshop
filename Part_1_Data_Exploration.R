@@ -60,15 +60,15 @@ library(leaflet)
 #
 #The config below is specific to the Cloudera CML setup:
 #
-#`config$spark.yarn.access.hadoopFileSystems <- "s3a://jf-workshop-mod-env-cdp-bucket/"`
+#`config$spark.yarn.access.hadoopFileSystems <- "s3a://[s3 bucket location]/"`
 
-#spark_home_set("/etc/spark/")
+s3_bucket <- Sys.getenv("STORAGE")
+
 config <- spark_config()
 config$spark.executor.memory <- "8g"
 config$spark.executor.cores <- "2"
 config$spark.driver.memory <- "6g"
-config$spark.yarn.access.hadoopFileSystems <- "s3a://jf-workshop-mod-env-cdp-bucket/"
-#config$spark.sql.catalogImplementation <- "in-memory"
+config$spark.yarn.access.hadoopFileSystems <- s3_bucket
 sc <- spark_connect(master = "yarn-client", config=config)
 
 #---
@@ -98,8 +98,7 @@ html(paste("<a href='http://spark-",Sys.getenv("CDSW_ENGINE_ID"),".",Sys.getenv(
 #run on the in-memory version.
 #
 
-s3_link_all <-
-  "s3a://jf-workshop-mod-env-cdp-bucket/data/airlines/csv/*"
+s3_link_all <- paste(s3_bucket,"data/airlines/csv/*",sep="")
 
 cols = list(
   FL_DATE = "date",
@@ -324,7 +323,7 @@ cancelled_by_route_non_combo %>% head(10) %>% as.data.frame
 spark_read_csv(
   sc,
   name = "airports",
-  path = "s3a://jf-workshop-mod-env-cdp-bucket/data/airlines/airports.csv",
+  path = paste(s3_bucket,"data/airlines/airports.csv",sep=""),
   infer_schema = TRUE,
   header = TRUE
 )

@@ -3,16 +3,18 @@ from pyspark.sql.types import *
 from pyspark.sql.functions import *
 import os
 
+s3_bucket = os.getenv("STORAGE")
+
 spark = SparkSession\
     .builder\
     .appName("Airlines Part2 Data Engineering ")\
     .config("spark.executor.memory","8g")\
     .config("spark.executor.cores","4")\
     .config("spark.driver.memory","6g")\
-    .config("spark.yarn.access.hadoopFileSystems","s3a://jf-workshop-mod-env-cdp-bucket/")\
+    .config("spark.yarn.access.hadoopFileSystems",s3_bucket)\
     .getOrCreate()
     
-flights_path="s3a://jf-workshop-mod-env-cdp-bucket/data/airlines/csv/*"
+flights_path= s3_bucket + "/data/airlines/csv/*"
 
 # ## Read Data from file
 
@@ -73,8 +75,8 @@ smaller_data_set = flight_raw_df.select(
 )
 
 # #### Commented out as it has already been run
-# smaller_data_set.write.parquet(
-#  path="s3a://jf-workshop-mod-env-cdp-bucket/data/airlines/airline_parquet",
+#smaller_data_set.write.parquet(
+#  path=s3_bucket + "/data/airlines/airline_parquet",
 #  mode='overwrite',
 #  compression="snappy")
 #

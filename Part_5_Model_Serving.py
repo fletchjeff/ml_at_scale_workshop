@@ -2,16 +2,20 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import *
 from pyspark.ml import PipelineModel
 from pyspark.ml.classification import LogisticRegressionModel
+import os
+
 
 ## Note this a local Spark instance running in the engine
 spark = SparkSession.builder \
       .appName("Flight Predictor") \
       .master("local[*]") \
       .config("spark.driver.memory","4g")\
-      .config("spark.hadoop.yarn.resourcemanager.principal","u_002")\
+      .config("spark.hadoop.yarn.resourcemanager.principal",os.getenv("HADOOP_USER_NAME"))\
       .getOrCreate()
 
-model = PipelineModel.load("s3a://jf-workshop-mod-env-cdp-bucket/data/airlines/models/lr-model") 
+s3_bucket = os.getenv("STORAGE")      
+      
+model = PipelineModel.load(s3_bucket + "/data/airlines/models/lr-model") 
 
 from pyspark.sql.types import *
 
