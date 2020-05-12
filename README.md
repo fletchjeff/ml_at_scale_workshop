@@ -29,6 +29,7 @@ While the ongoing dbplyr issue is waiting for a fix, run the following in a term
 wget https://cran.r-project.org/src/contrib/dbplyr_1.4.3.tar.gz
 tar xzvf dbplyr_1.4.3.tar.gz
 echo 'importFrom(magrittr,"%>%")' >> dbplyr/NAMESPACE
+Rscript -e 'install.packages("DBI")'
 R CMD INSTALL dbplyr
 ```
 
