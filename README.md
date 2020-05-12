@@ -23,6 +23,14 @@ This project is for the end-to-end ML at Scale workshop. It creates an API that 
 
 
 ### R - users
+While the ongoing dbplyr issue is waiting for a fix, run the following in a terminal to get it installed:
+
+```
+wget https://cran.r-project.org/src/contrib/dbplyr_1.4.3.tar.gz
+tar xzvf dbplyr_1.4.3.tar.gz
+echo 'importFrom(magrittr,"%>%")' >> dbplyr/NAMESPACE
+R CMD INSTALL dbplyr
+```
 
 `install.packages(c("sparklyr","psych","ggthemes","leaflet"))`
 
