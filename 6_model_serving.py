@@ -7,7 +7,7 @@ import os
 
 ## Note this a local Spark instance running in the engine
 spark = SparkSession.builder \
-      .appName("Flight Predictor") \
+      .appName("Model Serving") \
       .master("local[*]") \
       .config("spark.driver.memory","4g")\
       .config("spark.hadoop.yarn.resourcemanager.principal",os.getenv("HADOOP_USER_NAME"))\

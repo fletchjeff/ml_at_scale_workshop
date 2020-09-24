@@ -11,7 +11,7 @@ storage = os.getenv("STORAGE")
 
 spark = SparkSession\
     .builder\
-    .appName("Airlines Part2 Data Engineering ")\
+    .appName("Data Engineering")\
     .config("spark.executor.memory","8g")\
     .config("spark.executor.cores","4")\
     .config("spark.driver.memory","6g")\

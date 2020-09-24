@@ -12,7 +12,7 @@ storage = os.getenv("STORAGE")
 
 spark = SparkSession\
     .builder\
-    .appName("Airline ML")\
+    .appName("Model Training")\
     .config("spark.executor.memory","8g")\
     .config("spark.executor.cores","4")\
     .config("spark.driver.memory","6g")\
