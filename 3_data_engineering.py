@@ -20,7 +20,7 @@ spark = SparkSession\
 
 ### Create the smaller hive table used for model training
 
-flight_raw_df = spark.sql("select * from default.full_flight_table limit 10").show()
+flight_raw_df = spark.sql("select * from default.full_flight_table")
 
 ## Add in Week of year
 flight_raw_df = flight_raw_df.withColumn('WEEK',weekofyear('FL_DATE').cast('double'))
