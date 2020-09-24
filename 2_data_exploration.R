@@ -44,7 +44,7 @@ library(dplyr)
 library(ggplot2)
 library(ggthemes)
 library(psych)
-library(reshape2)
+#library(reshape2)
 library(leaflet)
 
 #---
@@ -62,13 +62,13 @@ library(leaflet)
 #
 #`config$spark.yarn.access.hadoopFileSystems <- "s3a://[s3 bucket location]/"`
 
-s3_bucket <- Sys.getenv("STORAGE")
+storage <- Sys.getenv("STORAGE")
 
 config <- spark_config()
 config$spark.executor.memory <- "8g"
 config$spark.executor.cores <- "2"
 config$spark.driver.memory <- "6g"
-config$spark.yarn.access.hadoopFileSystems <- s3_bucket
+config$spark.yarn.access.hadoopFileSystems <- storage
 sc <- spark_connect(master = "yarn-client", config=config)
 
 
@@ -89,49 +89,51 @@ sc <- spark_connect(master = "yarn-client", config=config)
 #run on the in-memory version.
 #
 
-s3_link_all <- paste(s3_bucket,"/data/airlines/csv/*",sep="")
+#s3_link_all <- paste(storage,"/datalake/data/airlines/csv/*",sep="")
+#
+#cols = list(
+#  FL_DATE = "date",
+#  OP_CARRIER = "character",
+#  OP_CARRIER_FL_NUM = "character",
+#  ORIGIN = "character",
+#  DEST = "character",
+#  CRS_DEP_TIME = "character",
+#  DEP_TIME = "character",
+#  DEP_DELAY = "double",
+#  TAXI_OUT = "double",
+#  WHEELS_OFF = "character",
+#  WHEELS_ON = "character",
+#  TAXI_IN = "double",
+#  CRS_ARR_TIME = "character",
+#  ARR_TIME = "character",
+#  ARR_DELAY = "double",
+#  CANCELLED = "double",
+#  CANCELLATION_CODE = "character",
+#  DIVERTED = "double",
+#  CRS_ELAPSED_TIME = "double",
+#  ACTUAL_ELAPSED_TIME = "double",
+#  AIR_TIME = "double",
+#  DISTANCE = "double",
+#  CARRIER_DELAY = "double",
+#  WEATHER_DELAY = "double",
+#  NAS_DELAY = "double",
+#  SECURITY_DELAY = "double",
+#  LATE_AIRCRAFT_DELAY = "double",
+#  'Unnamed: 27' = "logical"
+#)
+#
+#spark_read_csv(
+#  sc,
+#  name = "flight_data",
+#  path = s3_link_all,
+#  infer_schema = FALSE,
+#  columns = cols,
+#  header = TRUE
+#)
 
-cols = list(
-  FL_DATE = "date",
-  OP_CARRIER = "character",
-  OP_CARRIER_FL_NUM = "character",
-  ORIGIN = "character",
-  DEST = "character",
-  CRS_DEP_TIME = "character",
-  DEP_TIME = "character",
-  DEP_DELAY = "double",
-  TAXI_OUT = "double",
-  WHEELS_OFF = "character",
-  WHEELS_ON = "character",
-  TAXI_IN = "double",
-  CRS_ARR_TIME = "character",
-  ARR_TIME = "character",
-  ARR_DELAY = "double",
-  CANCELLED = "double",
-  CANCELLATION_CODE = "character",
-  DIVERTED = "double",
-  CRS_ELAPSED_TIME = "double",
-  ACTUAL_ELAPSED_TIME = "double",
-  AIR_TIME = "double",
-  DISTANCE = "double",
-  CARRIER_DELAY = "double",
-  WEATHER_DELAY = "double",
-  NAS_DELAY = "double",
-  SECURITY_DELAY = "double",
-  LATE_AIRCRAFT_DELAY = "double",
-  'Unnamed: 27' = "logical"
-)
+airlines <- sdf_sql(sc, "select * from full_flight_table")
 
-spark_read_csv(
-  sc,
-  name = "flight_data",
-  path = s3_link_all,
-  infer_schema = FALSE,
-  columns = cols,
-  header = TRUE
-)
-
-airlines <- tbl(sc, "flight_data")
+#airlines <- tbl(sc, "flight_data")
 
 airlines %>% count()
 
@@ -314,7 +316,7 @@ cancelled_by_route_non_combo %>% head(10) %>% as.data.frame
 spark_read_csv(
   sc,
   name = "airports",
-  path = paste(s3_bucket,"/data/airlines/airports.csv",sep=""),
+  path = paste(storage,"/datalake/data/airlines/airports.csv",sep=""),
   infer_schema = TRUE,
   header = TRUE
 )

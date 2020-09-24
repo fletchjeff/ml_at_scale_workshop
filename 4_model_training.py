@@ -8,7 +8,7 @@ from pyspark.sql.functions import udf,substring,weekofyear,concat,col,when,lengt
 from pyspark.ml.classification import LogisticRegression
 from pyspark.ml.evaluation import BinaryClassificationEvaluator
 
-s3_bucket = os.getenv("STORAGE")
+storage = os.getenv("STORAGE")
 
 spark = SparkSession\
     .builder\
@@ -16,7 +16,7 @@ spark = SparkSession\
     .config("spark.executor.memory","8g")\
     .config("spark.executor.cores","4")\
     .config("spark.driver.memory","6g")\
-    .config("spark.yarn.access.hadoopFileSystems",s3_bucket)\
+    .config("spark.yarn.access.hadoopFileSystems",storage)\
 .getOrCreate()
 
 flight_df_original = spark.sql("select * from smaller_flight_table")
@@ -106,8 +106,8 @@ AUROC_val
 cdsw.track_metric("maxIter", maxIter)
 cdsw.track_metric("elasticNetParam", elasticNetParam)
 cdsw.track_metric("regParam", regParam)
-cdsw.track_metric("AUROC", round(AUROC_val,3))
+cdsw.track_metric("AUROC", round(float(AUROC_val),3))
 
 
 ## Commented out as its already aone
-#lrModel.write().overwrite().save(s3_bucket + "/data/airlines/models/lr-model")
+#lrModel.write().overwrite().save(storage + "/datalake/data/airlines/lr-model")

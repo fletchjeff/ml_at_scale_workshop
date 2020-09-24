@@ -42,7 +42,7 @@
             <label for="fd">Flight Duration:</label> <input class="fld" type="text" value="85" id="fd"><br>
             <label for="we">Week:</label> <input class="fld" type="text" value="11" id="we"><br>
             <label for="di">Distance:</label> <input class="fld" type="text" value="328" id="di"><br><br>
-            <input type="submit" class="btn" value="Will it be late?" onclick="go_fetch()"></input>
+            <input type="submit" class="btn" value="Will it be cancelled?" onclick="go_fetch()"></input>
         </div>
   
         
@@ -53,8 +53,8 @@
     <script>
 
         var url = window.location.origin.substr(0,window.location.origin.indexOf(":")+1) + "//" + "modelservice." + window.location.origin.substr(window.location.origin.indexOf(".")+1) + '/model'
-        var api_key = "mr0zd6k7lj8x7d8gwz8m227x91ia12e3"
-        var model_api_key = "d89d4dd192b05a1a7057934e3108d74f7500fe936db438a99665b1ed660c4606.2007563e432a9badc8c06246f22fa650b6611c7a876d79ad7082a9011db91807"
+        var api_key = "mjks92ohtsq96rawk9tll0opjjqnfuj0"
+        //var model_api_key = "d89d4dd192b05a1a7057934e3108d74f7500fe936db438a99665b1ed660c4606.2007563e432a9badc8c06246f22fa650b6611c7a876d79ad7082a9011db91807"
 
       
         function go_fetch() {
@@ -74,7 +74,7 @@
                     body: JSON.stringify(post_data), // data can be `string` or {object}!
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization' : 'Bearer ' + model_api_key                        
+                        //'Authorization' : 'Bearer ' + model_api_key                        
                     }
                 })
                 .then(res => res.json())

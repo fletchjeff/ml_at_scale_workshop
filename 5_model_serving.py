@@ -13,9 +13,9 @@ spark = SparkSession.builder \
       .config("spark.hadoop.yarn.resourcemanager.principal",os.getenv("HADOOP_USER_NAME"))\
       .getOrCreate()
 
-s3_bucket = os.getenv("STORAGE")      
+storage = os.getenv("STORAGE")      
       
-model = PipelineModel.load(s3_bucket + "/data/airlines/models/lr-model") 
+model = PipelineModel.load(storage + "/datalake/data/airlines/lr-model") 
 
 from pyspark.sql.types import *
 

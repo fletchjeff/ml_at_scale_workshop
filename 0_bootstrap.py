@@ -10,6 +10,11 @@
 
 # Install the requirements
 !pip3 install git+https://github.com/fastforwardlabs/cmlbootstrap#egg=cmlbootstrap
+!pip3 install flask
+!R CMD INSTALL dplyr
+!R CMD INSTALL tibble
+!R CMD INSTALL sparklyr
+!R CMD INSTALL psych ggthemes leaflet 
 
 # Create the directories and upload data
 from cmlbootstrap import CMLBootstrap
