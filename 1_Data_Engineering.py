@@ -3,7 +3,7 @@ from pyspark.sql.types import *
 from pyspark.sql.functions import *
 import os
 
-s3_bucket = os.getenv("STORAGE")
+storage = os.getenv("STORAGE")
 
 spark = SparkSession\
     .builder\
@@ -11,10 +11,10 @@ spark = SparkSession\
     .config("spark.executor.memory","8g")\
     .config("spark.executor.cores","4")\
     .config("spark.driver.memory","6g")\
-    .config("spark.yarn.access.hadoopFileSystems",s3_bucket)\
+    .config("spark.yarn.access.hadoopFileSystems",storage)\
     .getOrCreate()
     
-flights_path= s3_bucket + "/data/airlines/csv/*"
+flights_path = storage + "/datalake/data/airlines/csv/*"
 
 # ## Read Data from file
 
@@ -55,9 +55,6 @@ flight_raw_df = spark.read.csv(
     nullValue='NA'
 )
 
-#from pyspark.sql.types import StringType	
-#from pyspark.sql.functions import udf,weekofyear
-
 flight_raw_df = flight_raw_df.withColumn('WEEK',weekofyear('FL_DATE').cast('double'))
 
 smaller_data_set = flight_raw_df.select(	
@@ -80,10 +77,10 @@ smaller_data_set = flight_raw_df.select(
 #  mode='overwrite',
 #  compression="snappy")
 #
-#smaller_data_set.write.saveAsTable(
-#  'default.smaller_flight_table',
-#   format='parquet', 
-#   mode='overwrite')
+smaller_data_set.write.saveAsTable(
+  'default.smaller_flight_table',
+   format='parquet', 
+   mode='overwrite')
 
 spark.sql("select * from default.smaller_flight_table limit 10").show()
 
