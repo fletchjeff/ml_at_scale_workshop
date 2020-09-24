@@ -9,19 +9,12 @@
 # abfs://[something] and on CDSW cluster, it will be hdfs://[something]
 
 # Install the requirements
-#!pip3 install -r requirements.txt
 !pip3 install git+https://github.com/fastforwardlabs/cmlbootstrap#egg=cmlbootstrap
 
 # Create the directories and upload data
-
 from cmlbootstrap import CMLBootstrap
-from IPython.display import Javascript, HTML
 import os
-import time
-import json
-import requests
 import xml.etree.ElementTree as ET
-
 
 # Set the setup variables needed by CMLBootstrap
 HOST = os.getenv("CDSW_API_URL").split(

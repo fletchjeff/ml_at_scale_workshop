@@ -1,9 +1,14 @@
+## Import the data
+# This file was downloaded from Kaggle as a CSV and upload to S3 in the previous step. Since we know the schema already, we can make its 
+# correct by defining the schema for the import rather than relying on inferSchema. Its also faster!
+
 from pyspark.sql import SparkSession
 from pyspark.sql.types import *
 from pyspark.sql.functions import *
 import os
 
 storage = os.getenv("STORAGE")
+
 
 spark = SparkSession\
     .builder\
@@ -57,6 +62,19 @@ flight_raw_df = spark.read.csv(
 
 flight_raw_df = flight_raw_df.withColumn('WEEK',weekofyear('FL_DATE').cast('double'))
 
+# Create the Hive table
+# This is here to create the table in Hive used be the other parts of the project, if it
+# does not already exist.
+
+if ('full_flight_table' not in list(spark.sql("show tables in default").toPandas()['tableName'])):
+    print("creating the full_flight_table table")
+    flight_raw_df\
+        .write.format("parquet")\
+        .mode("overwrite")\
+        .saveAsTable(
+            'default.flight_raw_df',
+        )
+
 smaller_data_set = flight_raw_df.select(	
   "WEEK",	
   "FL_DATE",
@@ -71,16 +89,25 @@ smaller_data_set = flight_raw_df.select(
   "DISTANCE"
 )
 
-# #### Commented out as it has already been run
-#smaller_data_set.write.parquet(
-#  path=s3_bucket + "/data/airlines/airline_parquet",
-#  mode='overwrite',
-#  compression="snappy")
-#
-smaller_data_set.write.saveAsTable(
-  'default.smaller_flight_table',
-   format='parquet', 
-   mode='overwrite')
+spark.sql("show databases").show()
+
+spark.sql("show tables in default").show()
+
+# Create the Hive table
+# This is here to create the table in Hive used be the other parts of the project, if it
+# does not already exist.
+
+if ('smaller_flight_table' not in list(spark.sql("show tables in default").toPandas()['tableName'])):
+    print("creating the smaller_flight_table table")
+    smaller_data_set\
+        .write.format("parquet")\
+        .mode("overwrite")\
+        .saveAsTable(
+            'default.smaller_flight_table',
+        )
+
+
+        flight_raw_df
 
 spark.sql("select * from default.smaller_flight_table limit 10").show()
 
