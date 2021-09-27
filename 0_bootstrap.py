@@ -10,7 +10,7 @@
 
 # Install the requirements
 !pip3 install git+https://github.com/fastforwardlabs/cmlbootstrap#egg=cmlbootstrap
-!pip3 install flask
+!pip3 install flask pandas
 !Rscript -e "install.packages('dplyr')"
 !Rscript -e "install.packages('tibble')"
 !Rscript -e "install.packages('sparklyr')"
